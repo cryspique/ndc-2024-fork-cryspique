@@ -18,13 +18,13 @@ class Player():
         self.direction = config.DIR_PLAYER_EAST
         self.speed = 1
         self.isInAir = True
-        self.jumpHeight = 0
         self.jumpState = 0
+        self.jumpHeight = config.PLAYER_JUMP_LIST[self.jumpState]
         self.jumpBoost = 1
 
     def animation(self):
         # jump animation
-        if self.animeFrame > 0:
+        if self.animeFrame > 0 and ((pyxel.frame_count % 2) == 0):
             self.animeFrame = ((self.animeFrame + 1) % 5) + 1
             self.jumpState += 1
         if not self.isInAir:  # si on touche le sol l'animation s'arrète
@@ -33,13 +33,13 @@ class Player():
 
     def _update_keys(self):
         for _ in range(self.speed):
-            if pyxel.btn(config.KEY_LEFT) and self.canGoLeft():
+            if pyxel.btn(config.KEY_LEFT) and self.dontCollideLeft():
                 self.coords[0] -= 1
                 self.direction = config.DIR_PLAYER_WEST
-            if pyxel.btn(config.KEY_RIGHT) and self.canGoRight():
+            if pyxel.btn(config.KEY_RIGHT) and self.dontCollideRight():
                 self.coords[0] += 1
                 self.direction = config.DIR_PLAYER_EAST
-            if pyxel.btn(config.KEY_JUMP) and self.canGoUp() and \
+            if pyxel.btn(config.KEY_JUMP) and self.dontCollideUp() and \
                     not self.isInAir:
                 self.coords[1] -= 1
                 self.isInAir = True
@@ -47,42 +47,36 @@ class Player():
                 self.jumpState = 1
             for _ in range(((abs(self.jumpHeight)))*self.jumpBoost):
                 if self.jumpHeight < 0:
-                    if self.canGoUp():
+                    if self.dontCollideUp():
                         self.coords[1] += 1*copysign(1, self.jumpHeight)
                 else:
-                    if self.canGoDown():
+                    if self.dontCollideDown():
                         self.coords[1] += 1*copysign(1, self.jumpHeight)
-            if self.canGoDown():
+            if self.dontCollideDown():
                 self.isInAir = True
+                if self.jumpState == 0:
+                    self.jumpState = 5
             else:
-                self.jumpHeight = 0
+                self.jumpState = 0
+                self.jumpHeight = config.PLAYER_JUMP_LIST[self.jumpState]
 
     def _execute_jump(self):
         if self.isInAir:
-            if self.canGoUp():
-                if self.jumpState == 1:
-                    self.jumpHeight = -3
-                elif self.jumpState == 2:
-                    self.jumpHeight = -5
-                elif self.jumpState == 3:
-                    self.jumpHeight = -7
-                elif self.jumpState == 4:
-                    self.jumpHeight = -3
-                elif self.jumpState == 5:
-                    self.jumpHeight = -1
-                elif self.canGoDown():
-                    self.jumpBoost = 1
-                    self.jumpHeight = +2
-            elif self.canGoDown():
-                self.jumpHeight = +2
+            if self.dontCollideUp():
+                if self.jumpState < 5:
+                    self.jumpHeight = config.PLAYER_JUMP_LIST[self.jumpState]
+                else:
+                    self.jumpHeight = config.PLAYER_JUMP_LIST[-1] # indice -1 = vitesse de chute finale
+            elif self.dontCollideDown():
+                self.jumpHeight = config.PLAYER_JUMP_LIST[-1]
 
         # implementation des jump pad
         # doit etre sur une tile
         if ((self.coords[1]+self.height) % 8) == 0:
             # si on peut pas aller en bas sa veut dire qu'il n'a pas de pad
-            if self.canGoDown(COL_SPE):
+            if self.dontCollideDown(COL_SPE):
                 self.jumpBoost = 1
-            elif self.canGoDown(COL+COL_DOWN):
+            elif self.dontCollideDown(COL+COL_DOWN):
                 self.jumpBoost = 2
 
     def move(self):
@@ -91,7 +85,7 @@ class Player():
         # le jump
         self._execute_jump()
 
-    def canGoDown(self, colision_list=None):
+    def dontCollideDown(self, colision_list=None):
         if colision_list is None:
             colision_list = COL + COL_DOWN + COL_SPE
         # on vérifie les collision seulement si le joueur est sur une tile
@@ -112,11 +106,11 @@ class Player():
                            ]
                            ))
 
-    def canGoUp(self, colision_list=None):
+    def dontCollideUp(self, colision_list=None):
         if colision_list is None:
             colision_list = COL + COL_DOWN + COL_SPE
         # TODO: bouger ce truc en dehors de la fonction
-        if self.canGoDown():
+        if self.dontCollideDown():
             self.isInAir = True
         else:
             self.isInAir = False
@@ -133,7 +127,7 @@ class Player():
                            ]
                            ))
 
-    def canGoLeft(self, colision_list=None):
+    def dontCollideLeft(self, colision_list=None):
         if colision_list is None:
             colision_list = COL + COL_DOWN + COL_SPE
         # fonction du turfu
@@ -148,7 +142,7 @@ class Player():
                            ]
                            ))
 
-    def canGoRight(self, colision_list=None):
+    def dontCollideRight(self, colision_list=None):
         if colision_list is None:
             colision_list = COL + COL_DOWN + COL_SPE
         # fonction du turfu
