@@ -28,7 +28,7 @@ deployer le code sur github:
 python tools\compile.py
 ```
 
-tester le jeu initial sur la platforme [pyxel](https://kitao.github.io/pyxel/wasm/launcher/?play=raiseFlaymeException.ndc-2024.run) web
+voir le code sur la platforme [pyxel](https://kitao.github.io/pyxel/wasm/launcher/?play=raiseFlaymeException.ndc-2024.run)
 
 ## Responsables
 
