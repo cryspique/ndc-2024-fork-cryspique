@@ -1,7 +1,5 @@
 import pyxel
-
 import config
-
 import pause
 import sound
 
