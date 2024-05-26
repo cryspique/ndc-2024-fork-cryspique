@@ -5,3 +5,4 @@ __pycache__/pause.cpython-311.pyc
 /sprites/__pycache__
 /__pycache__
 sprites/__pycache__/PlayerClass.cpython-311.pyc
+*.pyc
