@@ -3,6 +3,7 @@ import config
 import pause
 import sound
 
+from sprites.MovingPlatform import *
 from sprites.PinguinClass import Pinguin
 from sprites.PlayerClass import Player
 
@@ -23,6 +24,8 @@ def draw():
         pyxel.cls(config.COLOR_BG)
         pyxel.bltm(0, 0, tm, 0, 0, 5000, config.HEIGHT, config.COLKEY)
         player.drawSprite()
+        drawPlatform()
+    
         for pinguin in pinguins:
             pinguin.draw()
 
@@ -34,7 +37,7 @@ def draw():
                    config.HEIGHT/2-2, "GAME OVER", pyxel.COLOR_RED)
         pyxel.text(player.real_x2camera_x(config.WIDTH/2-13),
                    config.HEIGHT/2+30, "RESTART", pyxel.COLOR_RED)
-        if pause.button_colide_with_mouse((48,88,80,104)) and pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
+        if pause.button_colide_with_mouse((48,88,32,16)) and pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
             restart()
     else:
         if state == config.STATE_FIRST_LAUNCH:
@@ -53,19 +56,20 @@ def draw():
 def update():
     global state
 
-    if player.coords[1] > 128:
+    if player.coords[1] > 128: # if the player fall under y == 128 he dies
         state = config.STATE_GAMEOVER
 
-    if pyxel.btn(config.KEY_PAUSE):
+    if pyxel.btn(config.KEY_PAUSE): # if the pause key is pressed, pause menu comes up
         state = config.STATE_PAUSE
 
-    if state == config.STATE_PLAY:
+    if state == config.STATE_PLAY: # default state, everything is normal in this state
+        updatePlatform()
         player.move()
         player.focus()
         player.animation()
         for pinguin in pinguins:
             pinguin.update()
-            if pinguin.colide_with_player(player):
+            if pinguin.colide_with_player(player): # death by collision with a pinguin
                 state = config.STATE_GAMEOVER
     elif state == config.STATE_GAMEOVER:
         pass
@@ -82,7 +86,7 @@ def main():
 
     sounds.play_sound()
 
-    for pinguin in config.PINGUINS:
+    for pinguin in config.PINGUINS: # pinguin initialisation
         pinguins.append(Pinguin(*pinguin))
 
     pyxel.run(update, draw)

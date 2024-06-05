@@ -105,4 +105,23 @@ PINGUIN_SPEED_DIV = 2
 PINGUIN_IMG_OFFSET_X = 80
 PINGUIN_IMG_OFFSET_Y = 56
 
-PINGUINS = [(8, 32, 24)]
+PINGUINS = [(8, 32, 24),(51*8,10*8,57*8),(55*8,7*8,58*8)]
+
+# ======================================
+# MOUVIN PLATFORM
+# ======================================
+PLATFORM_SPEED = 3 # number of frames neede for the platform to move for 1 pixel
+PLATFORM_IMG_COORD = ((80,208),(88,208),(96,208))
+PLATFORM = [
+    [0,# relative x (put it to 0 by default)
+    32,# y
+    32,# x1 (starting point of the platform on the left)
+    40,# x2 (loopîng point of the platform on the right)
+    3,# lenght (lenght of the platform by unit of 8 pixel)
+    1 # direction (used for directionnal purposes)
+     ]
+]
+
+
+
+

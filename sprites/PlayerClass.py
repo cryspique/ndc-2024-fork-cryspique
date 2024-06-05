@@ -1,7 +1,6 @@
 from math import copysign
-
 import pyxel
-
+from .MovingPlatform import updatedPlatformCollisionList, elementIsInList
 import config
 
 COL = config.COLISION_LIST
@@ -74,10 +73,11 @@ class Player():
 
         # implementation des jump pad
         # doit etre sur une tile
-        if ((self.coords[1]+self.height) % 8) == 0:
+        if (((self.coords[1]+self.height) % 8) == 0):
             # si on peut pas aller en bas sa veut dire qu'il n'a pas de pad
-            if not(self.dontCollideDown(COL_SPE)): # not(don't collide with) => collide with
+            if not(self.dontCollideDown(COL_SPE, movingPlatform=False)): # not(don't collide with) => collide with
                 self.jumpBoost = 2
+                print("got ya")
             else:
                 self.jumpBoost = 1
 
@@ -93,7 +93,7 @@ class Player():
             self.isInAir = False
 
 
-    def dontCollideDown(self, colision_list=COL + COL_DOWN + COL_SPE):
+    def dontCollideDown(self, colision_list=COL + COL_DOWN + COL_SPE, movingPlatform = True):
         # on vérifie les collision seulement si le joueur est sur une tile
         # (ses pieds touchent les pixels les plus hauts de la tile)
         if ((self.coords[1]+self.height) % 8) != 0:
@@ -102,6 +102,13 @@ class Player():
         # (la division par 8 sert à faire la conversion des coordonée du
         # joueur au coordonnées des tiles)
         # on check le pixel à en bas à droite et à gauche
+        if movingPlatform:
+            platformCollisionList = updatedPlatformCollisionList(self.width)
+            checkingTuple = elementIsInList(self.coords[0]+self.width-1,platformCollisionList[0])
+            temporaryList = [platformCollisionList[1][i] for i in checkingTuple[1]]
+            if checkingTuple[0] and ((self.coords[1]+self.height) in temporaryList):
+                print(self.jumpBoost)
+                return False
         tilemap = pyxel.tilemaps[0]
         return not any(map(lambda x: x in colision_list,
                            [
@@ -164,3 +171,5 @@ class Player():
 
     def real_x2camera_x(self, x):
         return self.coords[0]-64+(self.width//2)+x
+
+
