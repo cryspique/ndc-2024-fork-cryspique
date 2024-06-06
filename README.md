@@ -29,6 +29,7 @@ python tools\compile.py
 ```
 
 voir le code sur la platforme [pyxel](https://kitao.github.io/pyxel/wasm/launcher/?play=raiseFlaymeException.ndc-2024.run)
+dernière version en ligne [test](https://kitao.github.io/pyxel/wasm/launcher/?play=cryspique.ndc-2024-fork-cryspique.ndc-2024-fork-cryspique&gamepad=enabled)
 
 ## Responsables
 
