@@ -77,7 +77,6 @@ class Player():
             # si on peut pas aller en bas sa veut dire qu'il n'a pas de pad
             if not(self.dontCollideDown(COL_SPE, movingPlatform=False)): # not(don't collide with) => collide with
                 self.jumpBoost = 2
-                print("got ya")
             else:
                 self.jumpBoost = 1
 
@@ -107,7 +106,6 @@ class Player():
             checkingTuple = elementIsInList(self.coords[0]+self.width-1,platformCollisionList[0])
             temporaryList = [platformCollisionList[1][i] for i in checkingTuple[1]]
             if checkingTuple[0] and ((self.coords[1]+self.height) in temporaryList):
-                print(self.jumpBoost)
                 return False
         tilemap = pyxel.tilemaps[0]
         return not any(map(lambda x: x in colision_list,
