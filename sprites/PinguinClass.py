@@ -14,7 +14,6 @@ class Pinguin:
         self.y = y
         self.dir = 0
         self.anim = 0
-
     def update(self):
         if pyxel.frame_count % config.PINGUIN_SPEED_DIV == 0:
             if self.dir == 0:
